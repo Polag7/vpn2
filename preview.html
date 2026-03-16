@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VPN Price Dashboard</title>
+
+<style>
+
+body{
+font-family:Segoe UI,Arial;
+margin:0;
+transition:0.3s;
+}
+
+body.light{
+background:#eef2ff;
+color:#111;
+}
+
+body.dark{
+background:#0f172a;
+color:#e5e7eb;
+}
+
+/* HEADER */
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 40px;
+font-size:26px;
+font-weight:700;
+}
+
+/* SEARCH */
+
+.search{
+padding:10px;
+width:250px;
+border-radius:6px;
+border:none;
+}
+
+/* BUTTON */
+
+.toggle{
+padding:8px 14px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* DASHBOARD CARDS */
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+padding:20px 40px;
+}
+
+.card{
+padding:20px;
+border-radius:10px;
+background:#4f46e5;
+color:white;
+font-weight:600;
+}
+
+body.dark .card{
+background:#2563eb;
+}
+
+/* TABLE */
+
+table{
+width:92%;
+margin:auto;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #ccc;
+}
+
+body.dark th, body.dark td{
+border-bottom:1px solid #334155;
+}
+
+th{
+background:#6366f1;
+color:white;
+}
+
+tr:hover{
+background:#e0e7ff;
+}
+
+body.dark tr:hover{
+background:#1e293b;
+}
+
+</style>
+</head>
+
+<body class="light">
+
+<header>
+
+VPN Price Dashboard
+
+<div>
+
+<input class="search" id="search" placeholder="Search VPN">
+
+<button class="toggle" onclick="toggleMode()">Light / Dark</button>
+
+</div>
+
+</header>
+
+<div class="cards">
+
+<div class="card">Total Services: <span id="total"></span></div>
+<div class="card">Cheapest Plan: $2</div>
+<div class="card">Unlimited Devices: Surfshark / IPVanish</div>
+<div class="card">Lifetime Plan: FastestVPN</div>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>Service</th>
+<th>Price</th>
+<th>Duration</th>
+</tr>
+</thead>
+
+<tbody id="vpnTable"></tbody>
+
+</table>
+
+<script>
+
+const vpns = [
+
+["Air VPN","€99","3 Years"],
+["AVG VPN","$135","3 Years"],
+["Avira","$78","1 Year"],
+["Bitdefender","$35","1 Year"],
+["Browsec","$48","2 Years"],
+["Cactus VPN","$70","32 Months"],
+["CyberGhost VPN","$57","2 Years"],
+["Express VPN","$78.18","28 Months"],
+["Fastest VPN","$20","2 Years"],
+["Fastest VPN","$40","Lifetime"],
+["Fly VPN","$120","2 Years"],
+["Hide.me","$70","2 Years"],
+["HideMyAss VPN","$108","3 Years"],
+["HotspotShield","$8","Month"],
+["IPVanish VPN","$47","1 Year"],
+["Ivacy VPN","$54","2 Years"],
+["Ivacy VPN","$102","5 Years"],
+["IVPN","$2","1 Week"],
+["IVPN","$6","1 Month"],
+["IVPN","$60","1 Year"],
+["IVPN","$100","2 Years"],
+["IVPN","$140","3 Years"],
+["Le VPN","$80","3 Years"],
+["Mullvad VPN","$6","Month"],
+["Namecheap VPN","$12","1 Year"],
+["Namecheap VPN","$68","3 Years"],
+["NextDNS","$2","Month"],
+["Nord VPN","$82","2 Years"],
+["NordLayer VPN","$8","Month"],
+["OVPN","$60","1 Year"],
+["OVPN","$152","3 Years"],
+["Panda VPN","$40","1 Year"],
+["Private Internet Access","$79","3 Years"],
+["Private VPN","$72","3 Years"],
+["Privado VPN","$16","1 Year"],
+["Privado VPN","$27","2 Years"],
+["Proton VPN","$72","2 Years"],
+["Pure VPN","$58","27 Months"],
+["SafeShell VPN","$17","3 Months"],
+["SafeShell VPN","$60","1 Year"],
+["Smart DNS Proxy","$7","Month"],
+["Smart DNS Proxy","$55","1 Year"],
+["Strong VPN","$48","1 Year"],
+["Surfshark VPN","$53.73","27 Months"],
+["TorGuard VPN","$60","1 Year"],
+["Trust.Zone","$56","2 Years"],
+["TunnelBear","$48","1 Year"],
+["Turbo VPN","$90","27 Months"],
+["UTunnel","$6","Month"],
+["VeePN","$56","28 Months"],
+["VPN Unlimited","$60","1 Year"],
+["VPN Unlimited","$162","3 Years"],
+["Windscribe","$70","1 Year"],
+["X VPN","$3","Month"],
+["Zoog VPN","$60","2 Years"]
+
+];
+
+vpns.sort((a,b)=>a[0].localeCompare(b[0]));
+
+const table=document.getElementById("vpnTable");
+
+function loadTable(data){
+
+table.innerHTML="";
+
+data.forEach(vpn=>{
+
+let row=`<tr>
+<td>${vpn[0]}</td>
+<td>${vpn[1]}</td>
+<td>${vpn[2]}</td>
+</tr>`;
+
+table.innerHTML+=row;
+
+});
+
+document.getElementById("total").innerText=data.length;
+
+}
+
+loadTable(vpns);
+
+/* SEARCH */
+
+document.getElementById("search").addEventListener("keyup",function(){
+
+let text=this.value.toLowerCase();
+
+let filtered=vpns.filter(vpn=>vpn[0].toLowerCase().includes(text));
+
+loadTable(filtered);
+
+});
+
+/* DARK MODE */
+
+function toggleMode(){
+
+let body=document.body;
+
+if(body.classList.contains("light")){
+body.classList.remove("light");
+body.classList.add("dark");
+}else{
+body.classList.remove("dark");
+body.classList.add("light");
+}
+
+}
+
+</script>
+
+</body>
+</html>
